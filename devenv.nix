@@ -14,6 +14,8 @@
     lsp.package = pkgs.clang;
   };
 
+  languages.python.enable = true;
+
   # Set compiler environment variables to Clang
   env.CXX = "clang++";
   env.CC = "clang";
@@ -26,6 +28,13 @@
 
   # https://devenv.sh/scripts/
   scripts = {
+    generate = {
+      description = "Generate binary files of Items (ascending, descending, shuffled)";
+      exec = ''
+        python3 generate_data.py "$@"
+      '';
+    };
+
     build = {
       description = "Build the C++ project and generate compile_commands.json";
       exec = ''
