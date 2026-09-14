@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <filesystem>
-#include <iostream>
 #include <string>
 
 #include "Common.hpp"
@@ -22,32 +21,31 @@ enum FileType : uint8_t {
 int main(int argc, char* argv[]) {
     constexpr int requiredArgC = 5;
     if (argc < requiredArgC) {
-        Log::error
-            << "Use pesquisa <method> <quantity> <situation> <key> [-P]\n";
+        Log::Error("Use pesquisa <method> <quantity> <situation> <key> [-P]");
         return -1;
     }
-
-    Log::error.SetEnabled(true);
 
     constexpr int optionalLastArgPos = 5;
     if (argc == (optionalLastArgPos + 1) &&
         std::string(argv[optionalLastArgPos]) == std::string("-P")) {
-        Log::info.SetEnabled(true);
+        Log::enableInfo = true;
     }
 
     long int const quantity = std::atol(argv[2]);
     constexpr int maxFileSize = 2000000;
     if (quantity > maxFileSize || quantity <= 0) {
-        Log::error << "<quantity> must be a value grater than 0 and equal or "
-                      "less than 2000000";
+        Log::Error(
+            "<quantity> must be a value grater than 0 and equal or "
+            "less than 2000000");
         return -1;
     }
 
     int const situationValue = std::atoi(argv[3]);
     if (situationValue < FileType::Ascending ||
         situationValue > FileType::Unordered) {
-        Log::error << "Error: <situation> must be one of these: 1 -> ascending "
-                      "file; 2 -> descending file; 3 -> unordered file\n";
+        Log::Error(
+            "<situation> must be one of these: 1 -> ascending file; 2 -> "
+            "descending file; 3 -> unordered file");
         return -1;
     }
 
@@ -87,9 +85,8 @@ int main(int argc, char* argv[]) {
 
     int const key = std::atoi(argv[4]);
     if (key < 0 || key > quantity - 1) {
-        Log::error
-            << "Error: <key> must be greater or equal to 0 and less than "
-               "<quantity>\n";
+        Log::Error(
+            "<key> must be greater or equal to 0 and less than <quantity>");
         return -1;
     }
 
@@ -107,9 +104,10 @@ int main(int argc, char* argv[]) {
             // TODO
             break;
         default:
-            Log::error << "Error: <method>, must be one of these: 1 -> indexed "
-                          "sequencial access; 2 -> binary tree; 3 -> B tree; 4 "
-                          "-> B* tree\n";
+            Log::Error(
+                "Error: <method>, must be one of these: 1 -> indexed "
+                "sequencial access; 2 -> binary tree; 3 -> B tree; 4 -> B* "
+                "tree");
             return -1;
     }
 
