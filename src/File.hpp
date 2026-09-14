@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -13,6 +15,11 @@ public:
 
     std::vector<Item> GetItems(int quantity);
 
+    std::string path() const;
+    std::filesystem::file_time_type lastModification() const;
+    uint64_t size() const;
+
 private:
     std::ifstream file_;
+    std::string path_;
 };

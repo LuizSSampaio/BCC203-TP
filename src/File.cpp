@@ -1,8 +1,9 @@
 #include "File.hpp"
 
+#include <filesystem>
 #include <stdexcept>
 
-File::File(const std::string& path) {
+File::File(const std::string& path) : path_(path) {
     this->file_ = std::ifstream(path, std::ios::binary);
 
     if (!this->file_.is_open()) {
@@ -25,3 +26,11 @@ std::vector<Item> File::GetItems(int quantity) {
 
     return items;
 }
+
+std::string File::path() const { return this->path_; }
+
+std::filesystem::file_time_type File::lastModification() const {
+    return std::filesystem::last_write_time(this->path_);
+}
+
+uint64_t File::size() const { return std::filesystem::file_size(this->path_); }
