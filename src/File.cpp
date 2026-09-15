@@ -3,7 +3,10 @@
 #include <filesystem>
 #include <stdexcept>
 
-File::File(const std::string& path) : path_(path) {
+#include "Common.hpp"
+
+File::File(const std::string& path, uint64_t quantity)
+    : path_(path), quantity_(quantity) {
     this->file_ = std::ifstream(path, std::ios::binary);
 
     if (!this->file_.is_open()) {
@@ -13,18 +16,34 @@ File::File(const std::string& path) : path_(path) {
 
 File::~File() { this->file_.close(); }
 
-// TODO: add reading by page
-std::vector<Item> File::GetItems(int quantity) {
-    std::vector<Item> items;
-    items.reserve(quantity);
+// TODO: make page reading in a single operation
+std::array<Item, PAGE_SIZE> File::GetNextPage() {
+    std::array<Item, PAGE_SIZE> page;
 
-    for (int i = 0; i < quantity; i++) {
+    for (int i = 0; i < PAGE_SIZE; i++) {
         Item item;
         this->file_.read(reinterpret_cast<char*>(&item), sizeof(Item));
-        items.push_back(item);
+        page[i] = item;
     }
 
-    return items;
+    return page;
+}
+
+// TODO: Implement edge case checks
+std::array<Item, PAGE_SIZE> File::GetPageAt(size_t index) {
+    std::array<Item, PAGE_SIZE> page;
+    auto oldPos = this->file_.tellg();
+
+    if (this->quantity_ / PAGE_SIZE >= index || index < 0) {
+        Log::Error("Invalid input file access index");
+        return page;
+    }
+
+    this->file_.seekg(sizeof(Item) * PAGE_SIZE * index, std::ifstream::beg);
+    page = this->GetNextPage();
+
+    this->file_.seekg(oldPos);
+    return page;
 }
 
 std::string File::path() const { return this->path_; }
@@ -34,3 +53,5 @@ std::filesystem::file_time_type File::lastModification() const {
 }
 
 uint64_t File::size() const { return std::filesystem::file_size(this->path_); }
+
+uint64_t File::quantity() const { return this->quantity_; }
