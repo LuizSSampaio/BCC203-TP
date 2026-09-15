@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
             filePath = candidateSame;
         }
     }
-    File const file(filePath.string());
+    File const file(filePath.string(), quantity);
 
     int const key = std::atoi(argv[4]);
     if (key < 0 || key > quantity - 1) {
