@@ -1,5 +1,5 @@
 #include "File.hpp"
-
+#define ITENS_PAG 100
 #include <filesystem>
 #include <stdexcept>
 
@@ -14,16 +14,19 @@ File::File(const std::string& path) : path_(path) {
 File::~File() { this->file_.close(); }
 
 // TODO: add reading by page
-std::vector<Item> File::GetItems(int quantity) {
-    std::vector<Item> items;
-    items.reserve(quantity);
+std::vector<Item> File::GetItems(int pag) {
+    if(pag < 0)
+        return {};
+    //verificar se a pag existe ou ultrapassa o tamanho do aquivo
+    
+    std::vector<Item> items(ITENS_PAG);
 
-    for (int i = 0; i < quantity; i++) {
-        Item item;
-        this->file_.read(reinterpret_cast<char*>(&item), sizeof(Item));
-        items.push_back(item);
-    }
-
+    this->file_.clear();
+    this->file_.seekg(pag*sizeof(Item)*ITENS_PAG, std::ios::beg);//movimentando o ponteiro para a pag desejada
+    this->file_.read(reinterpret_cast<char*>(items.data()), sizeof(Item)*ITENS_PAG);//lendo os bytes de uma página
+    
+    std::streamsize bytesLidos = this->file_.gcount();
+    items.resize(bytesLidos / sizeof(Item));
     return items;
 }
 
