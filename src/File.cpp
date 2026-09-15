@@ -1,6 +1,8 @@
 #include "File.hpp"
 
+#include <cstdint>
 #include <filesystem>
+#include <fstream>
 #include <stdexcept>
 
 #include "Common.hpp"
@@ -17,6 +19,7 @@ File::File(const std::string& path, uint64_t quantity)
 File::~File() { this->file_.close(); }
 
 // TODO: make page reading in a single operation
+// TODO: stop reading if reaches quantity
 std::array<Item, PAGE_SIZE> File::GetNextPage() {
     std::array<Item, PAGE_SIZE> page;
 
@@ -55,3 +58,6 @@ std::filesystem::file_time_type File::lastModification() const {
 uint64_t File::size() const { return std::filesystem::file_size(this->path_); }
 
 uint64_t File::quantity() const { return this->quantity_; }
+
+// TODO: handle case when reach quantity
+bool File::eof() const { return this->file_.eof(); }

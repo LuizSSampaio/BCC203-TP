@@ -21,6 +21,7 @@ public:
     std::filesystem::file_time_type lastModification() const;
     uint64_t size() const;
     uint64_t quantity() const;
+    bool eof() const;
 
 private:
     std::ifstream file_;
