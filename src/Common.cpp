@@ -19,7 +19,7 @@ void Log::Info(const std::string& msg) {
     }
 }
 void Log::Error(const std::string& msg) {
-    std::cout << BOLD << RED << "ERROR" << RESET << msg;
+    std::cout << BOLD << RED << "ERROR: " << RESET << msg;
     if (msg.empty() || msg.back() != '\n') {
         std::cout << '\n';
     }
