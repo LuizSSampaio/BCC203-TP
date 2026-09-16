@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <string>
 
 #include "../Common.hpp"
@@ -15,7 +16,7 @@
 ** input last modification time | input size | 0-entry | ... | n-entry
 */
 
-namespace IndexedSequencialAccess {
+namespace Algorithm::IndexedSequencialAccess {
 class Cache {
 public:
     struct Entry {
@@ -34,6 +35,8 @@ public:
     explicit Cache(File& input);
     // 1
     ~Cache();
+
+    std::optional<Entry> Search(int key);
 
 private:
     std::ifstream file_;
@@ -66,4 +69,4 @@ private:
     // 1
     static std::string GetPagePath(const std::string& basePath, int pageIndex);
 };
-}  // namespace IndexedSequencialAccess
+}  // namespace Algorithm::IndexedSequencialAccess
