@@ -9,9 +9,11 @@
 namespace Algorithm::IndexedSequencialAccess {
 class ISA {
 public:
+    // 2
     explicit ISA(std::shared_ptr<File> input);
     ~ISA() = default;
 
+    // 2
     std::optional<Item> Search(int key);
 
 private:

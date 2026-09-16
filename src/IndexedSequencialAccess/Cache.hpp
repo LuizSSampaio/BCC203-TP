@@ -36,6 +36,7 @@ public:
     // 1
     ~Cache();
 
+    // 1
     std::optional<Entry> Search(int key);
 
 private:
