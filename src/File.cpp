@@ -34,10 +34,12 @@ std::array<Item, PAGE_SIZE> File::GetNextPage() {
 
 // TODO: Implement edge case checks
 std::array<Item, PAGE_SIZE> File::GetPageAt(size_t index) {
+    Log::Info("Reading page " + std::to_string(index) + " from file (" +
+              this->path_ + ")");
     std::array<Item, PAGE_SIZE> page;
     auto oldPos = this->file_.tellg();
 
-    if (this->quantity_ / PAGE_SIZE >= index || index < 0) {
+    if (index * PAGE_SIZE >= this->quantity_) {
         Log::Error("Invalid input file access index");
         return page;
     }
