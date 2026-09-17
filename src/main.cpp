@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "BinaryTree/BTree.hpp"
 #include "Common.hpp"
 #include "File.hpp"
 #include "IndexedSequencialAccess/ISA.hpp"
@@ -126,7 +127,32 @@ int main(int argc, char* argv[]) {
     }
 
     if (method == Method::BinaryTree) {
-        // TODO
+        Log::Info("Starting Binary Tree search for key " + std::to_string(key));
+        const auto preprocessStart = std::chrono::high_resolution_clock::now();
+        auto binaryTree = Algorithm::BinaryTree::BTree(*file);
+        const auto preprocessEnd = std::chrono::high_resolution_clock::now();
+
+        const auto searchStart = std::chrono::high_resolution_clock::now();
+        const auto res = binaryTree.Search(key);
+        const auto searchEnd = std::chrono::high_resolution_clock::now();
+
+        const std::chrono::duration<double, std::milli> preprocessDuration =
+            preprocessEnd - preprocessStart;
+        const std::chrono::duration<double, std::milli> searchDuration =
+            searchEnd - searchStart;
+
+        if (!res.has_value()) {
+            Log::Info("Search finished: key " + std::to_string(key) +
+                      " not found");
+            std::cout << "Key not found\n";
+        } else {
+            Log::Info("Search finished: key " + std::to_string(key) + " found");
+            std::cout << "Found key: " << res.value() << "\n";
+        }
+
+        std::cout << "Preprocessing time: " << preprocessDuration.count()
+                  << " ms\n";
+        std::cout << "Search time: " << searchDuration.count() << " ms\n";
         return 0;
     }
 
