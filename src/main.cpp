@@ -1,9 +1,12 @@
+#include <chrono>
 #include <cstdint>
 #include <filesystem>
+#include <iostream>
 #include <string>
 
 #include "Common.hpp"
 #include "File.hpp"
+#include "IndexedSequencialAccess/ISA.hpp"
 
 enum Method : uint8_t {
     IndexedSequencialAccess = 1,
@@ -81,35 +84,65 @@ int main(int argc, char* argv[]) {
             filePath = candidateSame;
         }
     }
-    File const file(filePath.string());
+    std::shared_ptr<File> const file =
+        std::make_shared<File>(filePath.string(), quantity);
 
     int const key = std::atoi(argv[4]);
-    if (key < 0 || key > quantity - 1) {
-        Log::Error(
-            "<key> must be greater or equal to 0 and less than <quantity>");
+    if (key < 0 || key > maxFileSize - 1) {
+        Log::Error("<key> must be greater or equal to 0 and less than 2000000");
         return -1;
     }
 
-    switch (std::atoi(argv[1])) {
-        case Method::IndexedSequencialAccess:
-            // TODO
-            break;
-        case Method::BinaryTree:
-            // TODO
-            break;
-        case Method::BTree:
-            // TODO
-            break;
-        case Method::BStarTree:
-            // TODO
-            break;
-        default:
-            Log::Error(
-                "Error: <method>, must be one of these: 1 -> indexed "
-                "sequencial access; 2 -> binary tree; 3 -> B tree; 4 -> B* "
-                "tree");
-            return -1;
+    auto method = std::atoi(argv[1]);
+    if (method == Method::IndexedSequencialAccess) {
+        Log::Info("Starting Indexed Sequential Access search for key " +
+                  std::to_string(key));
+        const auto preprocessStart = std::chrono::high_resolution_clock::now();
+        auto isa = Algorithm::IndexedSequencialAccess::ISA(file);
+        const auto preprocessEnd = std::chrono::high_resolution_clock::now();
+
+        const auto searchStart = std::chrono::high_resolution_clock::now();
+        const auto res = isa.Search(key);
+        const auto searchEnd = std::chrono::high_resolution_clock::now();
+
+        const std::chrono::duration<double, std::milli> preprocessDuration =
+            preprocessEnd - preprocessStart;
+        const std::chrono::duration<double, std::milli> searchDuration =
+            searchEnd - searchStart;
+
+        if (!res.has_value()) {
+            Log::Info("Search finished: key " + std::to_string(key) +
+                      " not found");
+            std::cout << "Key not found\n";
+        } else {
+            Log::Info("Search finished: key " + std::to_string(key) + " found");
+            std::cout << "Found key: " << res.value() << "\n";
+        }
+
+        std::cout << "Preprocessing time: " << preprocessDuration.count()
+                  << " ms\n";
+        std::cout << "Search time: " << searchDuration.count() << " ms\n";
+        return 0;
     }
 
-    return 0;
+    if (method == Method::BinaryTree) {
+        // TODO
+        return 0;
+    }
+
+    if (method == Method::BTree) {
+        // TODO
+        return 0;
+    }
+
+    if (method == Method::BStarTree) {
+        // TODO
+        return 0;
+    }
+
+    Log::Error(
+        "Error: <method>, must be one of these: 1 -> indexed "
+        "sequencial access; 2 -> binary tree; 3 -> B tree; 4 -> B* "
+        "tree");
+    return -1;
 }
