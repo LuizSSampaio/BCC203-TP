@@ -18,28 +18,23 @@ File::File(const std::string& path, uint64_t quantity)
 
 File::~File() { this->file_.close(); }
 
-// TODO: make page reading in a single operation
 // TODO: stop reading if reaches quantity
 std::array<Item, PAGE_SIZE> File::GetNextPage() {
     std::array<Item, PAGE_SIZE> page;
 
-    for (int i = 0; i < PAGE_SIZE; i++) {
-        Item item;
-        this->file_.read(reinterpret_cast<char*>(&item), sizeof(Item));
-        page[i] = item;
-    }
+    this->file_.read(reinterpret_cast<char*>(page.data()),
+                     sizeof(Item) * PAGE_SIZE);  // lendo os bytes de uma página
 
     return page;
 }
 
-// TODO: Implement edge case checks
 std::array<Item, PAGE_SIZE> File::GetPageAt(size_t index) {
     Log::Info("Reading page " + std::to_string(index) + " from file (" +
               this->path_ + ")");
     std::array<Item, PAGE_SIZE> page;
     auto oldPos = this->file_.tellg();
 
-    if (index * PAGE_SIZE >= this->quantity_) {
+    if (index < 0 || index * PAGE_SIZE >= this->quantity_) {
         Log::Error("Invalid input file access index");
         return page;
     }
