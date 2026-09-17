@@ -88,9 +88,8 @@ int main(int argc, char* argv[]) {
         std::make_shared<File>(filePath.string(), quantity);
 
     int const key = std::atoi(argv[4]);
-    if (key < 0 || key > quantity - 1) {
-        Log::Error(
-            "<key> must be greater or equal to 0 and less than <quantity>");
+    if (key < 0 || key > maxFileSize - 1) {
+        Log::Error("<key> must be greater or equal to 0 and less than 2000000");
         return -1;
     }
 
