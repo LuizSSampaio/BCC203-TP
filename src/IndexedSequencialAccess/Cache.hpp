@@ -60,8 +60,7 @@ private:
                                     int pageIndex);
 
     // 3
-    static void MergePageFiles(const std::string& cachePath, const File& input,
-                               int pageCount);
+    static void MergePageFiles(const std::string& cachePath, const File& input,int pageCount);
     // 3
     static void CleanupPageFiles(const std::string& basePath, int pageCount);
 
