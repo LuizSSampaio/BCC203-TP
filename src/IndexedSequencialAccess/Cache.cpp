@@ -7,13 +7,51 @@
 
 namespace Algorithm::IndexedSequencialAccess{
 
+
+bool Cache::ValidateCache(const File& input){
+    
+    std::string cachePath = GetCachePath(input);
+    std::ifstream cacheFile(cachePath, std::ios::binary);
+
+    if(!cacheFile.is_open()){
+        Log::Error("Falha ao abrir a cache!");
+        return false;
+    }
+
+    Metadata meta;
+    cacheFile.read(reinterpret_cast<char*>(&meta), sizeof(Metadata));
+
+    if(meta.lastModification == input.lastModification() && meta.size == input.size()){
+        cacheFile.close();
+        return true;
+    }
+    cacheFile.close();
+    return false;
+}
+bool Cache::TryLoadExistingCache(const std::string& cachePath, const File& input){
+    if(std::filesystem::exists(cachePath)){
+        if(ValidateCache(input)){
+            return true;
+        }
+    }
+    return false;
+}
+void Cache::BuildCache(File& input, const std::string& cachePath){
+    if(!TryLoadExistingCache(cachePath, input)){
+        int pageCount = CreateSortedPageFiles(input);
+        
+        MergePageFiles(cachePath, input,pageCount);
+        CleanupPageFiles(cachePath, pageCount);
+
+        this->file_.open(cachePath, std::ios::binary);
+    }
+}
 void Cache::MergePageFiles(const std::string& cachePath, const File& input,int pageCount){
     std::ofstream cacheFile(cachePath, std::ios::binary);
     if(!cacheFile.is_open()){
         Log::Error("Falha ao criar o arquvio");
         return;
     }
-
     Metadata meta;
     meta.lastModification = input.lastModification();
     meta.size = input.size();
