@@ -37,6 +37,7 @@ public:
      *
      * @param input Referência para o arquivo de entrada com os dados originais.
      */
+    // 1
     explicit BTreeFile(File& input);
 
     /**
@@ -45,6 +46,7 @@ public:
      * Fecha o fluxo de leitura do arquivo binário (`file_`) caso esteja aberto,
      * liberando o descritor de arquivo do sistema.
      */
+    // 1
     ~BTreeFile();
 
     /**
@@ -64,6 +66,7 @@ public:
      * @return std::optional<Node> O nó encontrado caso a chave exista;
      *         caso contrário, std::nullopt (vazio).
      */
+    // 3
     std::optional<Node> Search(int key);
 
 private:
@@ -79,6 +82,7 @@ private:
      * @param input Arquivo de dados de entrada.
      * @return std::string Caminho completo do arquivo da árvore binária.
      */
+    // 1
     static std::string GetFilePath(const File& input);
 
     /**
@@ -93,6 +97,7 @@ private:
      * @return std::streamoff Posição em bytes do nó em relação ao início do
      * arquivo.
      */
+    // 1
     static std::streamoff GetNodeOffset(uint64_t nodeIndex);
 
     /**
@@ -105,6 +110,7 @@ private:
      * @param nodeIndex Índice onde o nó deve ser gravado.
      * @param node Dados do nó a serem persistidos.
      */
+    // 1
     static void WriteNode(std::fstream& file, uint64_t nodeIndex,
                           const Node& node);
 
@@ -119,6 +125,7 @@ private:
      * @param node Referência de saída onde o nó lido será armazenado.
      * @return true Se o nó foi lido com sucesso; false caso contrário.
      */
+    // 1
     static bool ReadNode(std::istream& file, uint64_t nodeIndex, Node& node);
 
     /**
@@ -132,6 +139,7 @@ private:
      * @param lastNodeIndex Referência para o contador do índice do último nó.
      * @return uint64_t Índice atribuído ao nó recém-adicionado.
      */
+    // 1
     static uint64_t AppendNode(std::fstream& file, const Node& node,
                                uint64_t& lastNodeIndex);
 
@@ -145,6 +153,7 @@ private:
      * @param file Fluxo de arquivo aberto para escrita.
      * @param input Arquivo de entrada do qual os metadados serão extraídos.
      */
+    // 1
     static void WriteMetadata(std::fstream& file, const File& input);
 
     /**
@@ -157,6 +166,7 @@ private:
      * @param file Fluxo de arquivo onde a raiz será gravada.
      * @param input Arquivo de entrada de onde o item raiz será lido.
      */
+    // 2
     static void InitializeRoot(std::fstream& file, File& input);
 
     /**
@@ -170,6 +180,7 @@ private:
      * @param input Arquivo de dados de entrada.
      * @param lastNodeIndex Referência para o controle do índice do último nó.
      */
+    // 2
     static void PopulateTree(std::fstream& file, File& input,
                              uint64_t& lastNodeIndex);
 
@@ -184,6 +195,7 @@ private:
      * @param pageIndex Índice da página correspondente no arquivo de dados.
      * @param lastNodeIndex Referência para o índice do último nó da árvore.
      */
+    // 2
     static void InsertPage(std::fstream& file,
                            const std::array<Item, PAGE_SIZE>& page,
                            uint64_t pageIndex, uint64_t& lastNodeIndex);
@@ -207,6 +219,7 @@ private:
      * encontra.
      * @param lastNodeIndex Referência para o índice do último nó da árvore.
      */
+    // 2
     static void InsertItem(std::fstream& file, const Item& item,
                            uint64_t pageIndex, uint64_t& lastNodeIndex);
 
@@ -223,6 +236,7 @@ private:
      * @return true Se o arquivo existente foi validado e carregado; false caso
      * contrário.
      */
+    // 1
     bool TryLoadExistingFile(const std::string& path, const File& input);
 
     /**
@@ -236,6 +250,7 @@ private:
      * @return true Se os metadados coincidirem com o arquivo original; false
      * caso contrário.
      */
+    // 1
     bool ValidateFile(const File& input);
 
     /**
@@ -250,6 +265,7 @@ private:
      * @param input Arquivo de dados de entrada.
      * @param path Caminho onde o arquivo da árvore binária será criado.
      */
+    // 2
     void BuildFile(File& input, const std::string& path);
 };
 }  // namespace Algorithm::BinaryTree

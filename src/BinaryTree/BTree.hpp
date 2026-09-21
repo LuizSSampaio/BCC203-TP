@@ -16,6 +16,7 @@ public:
      *
      * @param input Referência para o arquivo binário de dados de entrada.
      */
+    // 3
     explicit BTree(File& input);
 
     /**
@@ -43,6 +44,7 @@ public:
      * @return std::optional<Item> Contém o item encontrado se a chave existir;
      *         caso contrário, retorna std::nullopt (vazio).
      */
+    // 3
     std::optional<Item> Search(int key);
 
 private:
