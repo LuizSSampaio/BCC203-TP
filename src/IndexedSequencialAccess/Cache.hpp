@@ -22,10 +22,6 @@ public:
     struct Entry {
         int key;
         uint64_t pageIndex;
-
-        bool operator <(Entry& other){
-            return key < other.key;
-        } 
     };
 
     struct Metadata {
@@ -51,7 +47,6 @@ private:
     // 1
     bool ValidateCache(const File& input);
 
-
     // 1
     bool TryLoadExistingCache(const std::string& cachePath, const File& input);
     // 2
@@ -65,7 +60,8 @@ private:
                                     int pageIndex);
 
     // 3
-    static void MergePageFiles(const std::string& cachePath, const File& input,int pageCount);
+    static void MergePageFiles(const std::string& cachePath, const File& input,
+                               int pageCount);
     // 3
     static void CleanupPageFiles(const std::string& basePath, int pageCount);
 
