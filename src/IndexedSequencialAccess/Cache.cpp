@@ -4,6 +4,9 @@
 #include "Item.hpp"
 #include <fstream>
 #include <filesystem>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 
 namespace Algorithm::IndexedSequencialAccess{
 
@@ -56,8 +59,8 @@ void Cache::MergePageFiles(const std::string& cachePath, const File& input,int p
     meta.lastModification = input.lastModification();
     meta.size = input.size();
     //Escrevendo metadados no arquivo
-    cacheFile.write(reinterpret_cast<char*>(&meta), sizeof(Metadata));
-
+    cacheFile.write(reinterpret_cast<const char*>(&meta), sizeof(Metadata));
+    std::vector<Entry> entry(pageCount); 
     for(int i = 0;i < pageCount; i++){
         std::string pagePath = GetPagePath(cachePath, i);
         std::ifstream pageFile(pagePath, std::ios::binary);
@@ -65,15 +68,17 @@ void Cache::MergePageFiles(const std::string& cachePath, const File& input,int p
             //lê o primeiro item da pagina
             Item firstItem;
             pageFile.read(reinterpret_cast<char*>(&firstItem), sizeof(Item));
-            //coloca os dados no entrada
-            Entry entry;
-            entry.key = firstItem.key;
-            entry.pageIndex = static_cast<uint64_t>(i);
-            //escreve os dados na cache
-            cacheFile.write(reinterpret_cast<char*>(&entry), sizeof(Entry));
+            //coloca os dados no vetor
+            entry[i].key = firstItem.key;
+            entry[i].pageIndex = static_cast<uint64_t>(i);
+            
             pageFile.close();
         }
     }
+    std::sort(entry.begin(), entry.end());//ordenando as páginas
+    //escrita na cache
+    cacheFile.write(reinterpret_cast<const char*>(&entry), sizeof(Entry)*pageCount);
+
     cacheFile.close();
 }
 

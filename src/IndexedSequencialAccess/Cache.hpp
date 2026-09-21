@@ -22,6 +22,10 @@ public:
     struct Entry {
         int key;
         uint64_t pageIndex;
+
+        bool operator <(Entry& other){
+            return key < other.key;
+        } 
     };
 
     struct Metadata {
@@ -46,6 +50,7 @@ private:
     // the checked fields are last modification time and size
     // 1
     bool ValidateCache(const File& input);
+
 
     // 1
     bool TryLoadExistingCache(const std::string& cachePath, const File& input);
