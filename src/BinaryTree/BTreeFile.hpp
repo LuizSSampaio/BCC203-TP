@@ -16,7 +16,8 @@ namespace Algorithm::BinaryTree {
 class BTreeFile {
 public:
     struct Node {
-        Item item;
+        int key;
+        uint64_t pageIndex;
         uint64_t left = 0;
         uint64_t right = 0;
     };
@@ -60,10 +61,10 @@ public:
      * finalizada.
      *
      * @param key Chave numérica a ser procurada.
-     * @return std::optional<Item> O item encontrado caso a chave exista;
+     * @return std::optional<Node> O nó encontrado caso a chave exista;
      *         caso contrário, std::nullopt (vazio).
      */
-    std::optional<Item> Search(int key);
+    std::optional<Node> Search(int key);
 
 private:
     std::ifstream file_;
@@ -180,11 +181,12 @@ private:
      *
      * @param file Fluxo do arquivo de árvore.
      * @param page Array contendo os itens da página carregada em memória.
+     * @param pageIndex Índice da página correspondente no arquivo de dados.
      * @param lastNodeIndex Referência para o índice do último nó da árvore.
      */
     static void InsertPage(std::fstream& file,
                            const std::array<Item, PAGE_SIZE>& page,
-                           uint64_t& lastNodeIndex);
+                           uint64_t pageIndex, uint64_t& lastNodeIndex);
 
     /**
      * @brief Insere um item individual na árvore binária em disco.
@@ -201,10 +203,12 @@ private:
      *
      * @param file Fluxo de leitura/escrita do arquivo da árvore binária.
      * @param item Item a ser inserido.
+     * @param pageIndex Índice da página do arquivo de dados onde o item se
+     * encontra.
      * @param lastNodeIndex Referência para o índice do último nó da árvore.
      */
     static void InsertItem(std::fstream& file, const Item& item,
-                           uint64_t& lastNodeIndex);
+                           uint64_t pageIndex, uint64_t& lastNodeIndex);
 
     /**
      * @brief Tenta carregar e validar um arquivo de árvore binária

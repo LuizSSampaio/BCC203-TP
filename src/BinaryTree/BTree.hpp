@@ -29,9 +29,15 @@ public:
     /**
      * @brief Realiza a busca de um item pela chave informada.
      *
-     * Delega a pesquisa diretamente para o método `Search` do arquivo de árvore
-     * binária (`file_`). Percorre os nós na árvore em disco até localizar
-     * o item com a chave correspondente ou esgotar os nós.
+     * Consulta primeiramente a árvore binária em disco através de
+     * `file_.Search(key)` para localizar em qual página do arquivo de dados a
+     * chave reside:
+     * - Se a chave não for encontrada na árvore, encerra a busca retornando
+     * vazio.
+     * - Se for encontrada, recupera o `pageIndex` contido no nó e carrega essa
+     * página específica do arquivo de dados para a memória principal com
+     * `input_.GetPageAt(...)`.
+     * - Realiza a busca linear nos itens contidos na página em memória.
      *
      * @param key Chave numérica inteira a ser buscada.
      * @return std::optional<Item> Contém o item encontrado se a chave existir;
@@ -40,6 +46,7 @@ public:
     std::optional<Item> Search(int key);
 
 private:
+    File& input_;
     BTreeFile file_;
 };
 }  // namespace Algorithm::BinaryTree
