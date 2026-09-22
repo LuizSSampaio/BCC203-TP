@@ -4,10 +4,11 @@
 #include <iostream>
 #include <string>
 
+#include "BTree/BTree.hpp"
 #include "BinaryTree/BTree.hpp"
 #include "Common.hpp"
 #include "File.hpp"
-#include "IndexedSequencialAccess/ISA.hpp"
+#include "IndexedSequentialAccess/ISA.hpp"
 
 enum Method : uint8_t {
     IndexedSequencialAccess = 1,
@@ -99,7 +100,7 @@ int main(int argc, char* argv[]) {
         Log::Info("Starting Indexed Sequential Access search for key " +
                   std::to_string(key));
         const auto preprocessStart = std::chrono::high_resolution_clock::now();
-        auto isa = Algorithm::IndexedSequencialAccess::ISA(file);
+        auto isa = Algorithm::IndexedSequentialAccess::ISA(file);
         const auto preprocessEnd = std::chrono::high_resolution_clock::now();
 
         const auto searchStart = std::chrono::high_resolution_clock::now();
@@ -157,7 +158,32 @@ int main(int argc, char* argv[]) {
     }
 
     if (method == Method::BTree) {
-        // TODO
+        Log::Info("Starting B Tree search for key " + std::to_string(key));
+        const auto preprocessStart = std::chrono::high_resolution_clock::now();
+        auto bTree = Algorithm::BTree::BTree(*file);
+        const auto preprocessEnd = std::chrono::high_resolution_clock::now();
+
+        const auto searchStart = std::chrono::high_resolution_clock::now();
+        const auto res = bTree.Search(key);
+        const auto searchEnd = std::chrono::high_resolution_clock::now();
+
+        const std::chrono::duration<double, std::milli> preprocessDuration =
+            preprocessEnd - preprocessStart;
+        const std::chrono::duration<double, std::milli> searchDuration =
+            searchEnd - searchStart;
+
+        if (!res.has_value()) {
+            Log::Info("Search finished: key " + std::to_string(key) +
+                      " not found");
+            std::cout << "Key not found\n";
+        } else {
+            Log::Info("Search finished: key " + std::to_string(key) + " found");
+            std::cout << "Found key: " << res.value() << "\n";
+        }
+
+        std::cout << "Preprocessing time: " << preprocessDuration.count()
+                  << " ms\n";
+        std::cout << "Search time: " << searchDuration.count() << " ms\n";
         return 0;
     }
 
