@@ -6,7 +6,7 @@
 #include "../Item.hpp"
 #include "Cache.hpp"
 
-namespace Algorithm::IndexedSequencialAccess {
+namespace Algorithm::IndexedSequentialAccess {
 class ISA {
 public:
     // 2
@@ -54,4 +54,4 @@ private:
     std::shared_ptr<File> input_;
     Cache cache_;
 };
-}  // namespace Algorithm::IndexedSequencialAccess
+}  // namespace Algorithm::IndexedSequentialAccess

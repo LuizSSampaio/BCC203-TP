@@ -16,7 +16,7 @@
 ** input last modification time | input size | 0-entry | ... | n-entry
 */
 
-namespace Algorithm::IndexedSequencialAccess {
+namespace Algorithm::IndexedSequentialAccess {
 class Cache {
 public:
     struct Entry {
@@ -218,4 +218,4 @@ private:
      */
     static std::string GetPagePath(const std::string& basePath, int pageIndex);
 };
-}  // namespace Algorithm::IndexedSequencialAccess
+}  // namespace Algorithm::IndexedSequentialAccess
