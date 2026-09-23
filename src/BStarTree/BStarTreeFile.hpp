@@ -71,11 +71,13 @@ public:
          *
          * @return true se o tipo for Data; false caso contrário.
          */
+        // 3
         [[nodiscard]] bool isLeaf() const;
 
         /**
          * @brief Construtor padrão do nó. Inicializa como nó de dados vazio.
          */
+        // 1
         Node();
 
         /**
@@ -83,6 +85,7 @@ public:
          *
          * @param type Tipo do nó (Index ou Data).
          */
+        // 1
         explicit Node(Type type);
     };
 
@@ -95,6 +98,7 @@ public:
      *
      * @param input Referência para o arquivo binário de dados de entrada.
      */
+    // 1
     explicit BStarTreeFile(File& input);
 
     /**
@@ -102,6 +106,7 @@ public:
      *
      * Fecha o fluxo de leitura do arquivo em disco (`file_`).
      */
+    // 1
     ~BStarTreeFile();
 
     /**
@@ -114,6 +119,7 @@ public:
      * @param key Chave numérica a ser procurada.
      * @return std::optional<Node> O nó folha contendo a chave, ou std::nullopt.
      */
+    // 3
     std::optional<Node> Search(int key);
 
 private:
@@ -127,6 +133,7 @@ private:
      * @param input Arquivo de dados de entrada.
      * @return std::string Caminho completo com sufixo ".bstartree".
      */
+    // 1
     static std::string GetFilePath(const File& input);
 
     /**
@@ -137,6 +144,7 @@ private:
      * @return std::streamoff Deslocamento em bytes em relação ao início do
      * arquivo.
      */
+    // 1
     static std::streamoff GetNodeOffset(uint64_t nodeIndex);
 
     /**
@@ -146,6 +154,7 @@ private:
      * @param input Arquivo de entrada original para validação de integridade.
      * @return true se o arquivo existe e é válido; false caso contrário.
      */
+    // 1
     bool TryLoadExistingFile(const std::string& path, const File& input);
 
     /**
@@ -155,6 +164,7 @@ private:
      * @param input Arquivo de entrada original.
      * @return true se os metadados forem compatíveis; false caso contrário.
      */
+    // 1
     bool ValidateFile(const File& input);
 
     /**
@@ -164,6 +174,7 @@ private:
      * @param input Arquivo de dados de entrada.
      * @param path Caminho do arquivo a ser criado.
      */
+    // 2
     void BuildFile(File& input, const std::string& path);
 
     /**
@@ -173,6 +184,7 @@ private:
      * @param nodeIndex Índice do nó a ser gravado.
      * @param node Estrutura do nó a ser persistida.
      */
+    // 1
     static void WriteNode(std::fstream& file, uint64_t nodeIndex,
                           const Node& node);
 
@@ -184,6 +196,7 @@ private:
      * @param node Referência para armazenar o nó lido.
      * @return true se a leitura foi bem-sucedida; false caso contrário.
      */
+    // 1
     static bool ReadNode(std::istream& file, uint64_t nodeIndex, Node& node);
 
     /**
@@ -195,6 +208,7 @@ private:
      * @param lastNodeIndex Referência para o índice do último nó gravado.
      * @return uint64_t Novo índice atribuído ao nó.
      */
+    // 1
     static uint64_t AppendNode(std::fstream& file, const Node& node,
                                uint64_t& lastNodeIndex);
 
@@ -205,6 +219,7 @@ private:
      * @param input Arquivo original de dados.
      * @param rootIndex Índice do nó raiz no momento da gravação.
      */
+    // 1
     static void WriteMetadata(std::fstream& file, const File& input,
                               int64_t rootIndex);
 
@@ -218,6 +233,7 @@ private:
      * @return size_t Para nós Data, índice da entrada ou de inserção. Para nós
      *         Index, índice do ponteiro do filho onde a chave deve residir.
      */
+    // 2
     static size_t FindKeyIndex(const Node& node, int key, bool& found);
 
     /**
@@ -226,6 +242,7 @@ private:
      * @param node Nó de dados com espaço disponível (size < PAGE_SIZE).
      * @param entry Entrada a ser inserida.
      */
+    // 2
     static void InsertIntoNonFullDataNode(Node& node, const Entry& entry);
 
     /**
@@ -237,6 +254,7 @@ private:
      * @param rightChild Ponteiro para o filho à direita associado à chave.
      */
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    // 2
     static void InsertIntoNonFullIndexNode(Node& node, int key,
                                            int64_t rightChild);
 
@@ -254,6 +272,7 @@ private:
      * @param lastNodeIndex Referência para o controle do índice do último nó no
      * arquivo.
      */
+    // 2
     static void SplitDataNode(std::fstream& file, Node& node,
                               uint64_t nodeIndex, const Entry& entry,
                               Entry& promotedEntry,
@@ -275,6 +294,7 @@ private:
      * arquivo.
      */
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    // 2
     static void SplitIndexNode(std::fstream& file, Node& node,
                                uint64_t nodeIndex, int key,
                                int64_t rightChildIndex, Entry& promotedEntry,
@@ -293,6 +313,7 @@ private:
      * @return true se o nó atual foi dividido e requer inserção no pai; false
      * caso contrário.
      */
+    // 2
     static bool InsertInternal(std::fstream& file, int64_t currentNodeIndex,
                                const Entry& entryToInsert, Entry& promotedEntry,
                                int64_t& newChildIndex, uint64_t& lastNodeIndex);
@@ -310,6 +331,7 @@ private:
      * @param rootIndex Referência para o índice da raiz atual.
      * @param lastNodeIndex Referência para o controle de nós no arquivo.
      */
+    // 2
     static void InsertItem(std::fstream& file, const Item& item,
                            uint64_t pageIndex, int64_t& rootIndex,
                            uint64_t& lastNodeIndex);
@@ -324,6 +346,7 @@ private:
      * @param rootIndex Referência para o índice da raiz.
      * @param lastNodeIndex Referência para o controle de nós no arquivo.
      */
+    // 2
     static void InsertPage(
         std::fstream& file, const std::array<Item, PAGE_SIZE>& page,
         uint64_t pageIndex,  // NOLINT(bugprone-easily-swappable-parameters)
@@ -338,6 +361,7 @@ private:
      * @param rootIndex Referência para o índice da raiz.
      * @param lastNodeIndex Referência para o controle de nós no arquivo.
      */
+    // 2
     static void PopulateTree(std::fstream& file, File& input,
                              int64_t& rootIndex, uint64_t& lastNodeIndex);
 };

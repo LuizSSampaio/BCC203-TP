@@ -20,6 +20,7 @@ public:
      *
      * @param input Referência para o arquivo binário de dados de entrada.
      */
+    // 3
     explicit BStarTree(File& input);
 
     /**
@@ -43,6 +44,7 @@ public:
      * @return std::optional<Item> Contém o item encontrado se a chave existir;
      *         caso contrário, retorna std::nullopt.
      */
+    // 3
     std::optional<Item> Search(int key);
 
 private:
@@ -58,6 +60,7 @@ private:
      * @return std::optional<BStarTreeFile::Entry> A entrada contendo a chave e
      * pageIndex, ou std::nullopt caso não esteja presente no nó.
      */
+    // 3
     static std::optional<BStarTreeFile::Entry> FindEntryInNode(
         const BStarTreeFile::Node& node, int key);
 
@@ -69,6 +72,7 @@ private:
      * @param key Chave numérica procurada.
      * @return std::optional<Item> O item encontrado ou std::nullopt.
      */
+    // 3
     static std::optional<Item> SearchInPage(
         const std::array<Item, PAGE_SIZE>& page, int key);
 };
