@@ -98,6 +98,12 @@ int main(int argc, char* argv[]) {
 
     auto method = std::atoi(argv[1]);
     if (method == Method::IndexedSequencialAccess) {
+        if (situationValue != 1) {
+            Log::Error(
+                "Input file state is unsuported for Indexed Sequencial Access");
+            return -1;
+        }
+
         Log::Info("Starting Indexed Sequential Access search for key " +
                   std::to_string(key));
         const auto preprocessStart = std::chrono::high_resolution_clock::now();
