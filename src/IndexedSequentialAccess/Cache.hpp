@@ -7,9 +7,7 @@
 #include <optional>
 #include <string>
 
-#include "../Common.hpp"
 #include "../File.hpp"
-#include "../Item.hpp"
 
 /*
 ** How the cache file will be organized
@@ -125,22 +123,7 @@ private:
      */
     void BuildCache(File& input, const std::string& cachePath);
 
-    // 2
-    /**
-     * @brief Cria arquivos parciais temporários ordenados para cada página do
-     * arquivo.
-     *
-     * Percorre sequencialmente todas as páginas de `input` até o fim do arquivo
-     * (`eof()`), gravando cada página ordenada em um arquivo separado através
-     * de `WriteSortedPageFile`.
-     *
-     * @param input Arquivo de dados original.
-     * @return int Quantidade total de páginas processadas e arquivos
-     * temporários criados.
-     */
-    static int CreateSortedPageFiles(File& input);
-
-    // 2
+    // 3
     /**
      * @brief Cria e grava em disco um arquivo temporário com as entradas
      * ordenadas de uma página.
@@ -149,20 +132,7 @@ private:
      * correspondente, ordena as entradas em memória por chave via
      * `std::ranges::sort` e salva o array resultante em formato binário no
      * arquivo de caminho `pagePath`.
-     *
-     * @param pagePath Caminho do arquivo temporário da página a ser gerado.
-     * @param page Array contendo os itens da página carregada.
-     * @param pageIndex Índice sequencial da página de dados correspondente.
-     */
-    static void WriteSortedPageFile(const std::string& pagePath,
-                                    const std::array<Item, PAGE_SIZE>& page,
-                                    int pageIndex);
-
-    // 3
-    /**
-     * @brief Intercala os arquivos temporários de páginas ordenadas em um único
-     * arquivo de índice.
-     *
+     * +
      * Executa a intercalação balanceada (*k-way merge*):
      * - Grava os metadados do arquivo de entrada no início do arquivo de cache
      * consolidado.
@@ -175,47 +145,21 @@ private:
      * @param cachePath Caminho de destino do arquivo de cache final
      * consolidado.
      * @param input Arquivo de dados original para escrita dos metadados.
-     * @param pageCount Quantidade total de arquivos de página a serem
-     * intercalados.
      */
-    static void MergePageFiles(const std::string& cachePath, const File& input,
-                               int pageCount);
-
-    // 3
-    /**
-     * @brief Remove todos os arquivos temporários de páginas criados durante a
-     * intercalação.
-     *
-     * Exclui fisicamente do disco os arquivos temporários no formato
-     * `<basePath>__page_<pageIndex>.cache_01`.
-     *
-     * @param basePath Caminho base do arquivo de dados.
-     * @param pageCount Quantidade de arquivos parciais a serem excluídos.
-     */
-    static void CleanupPageFiles(const std::string& basePath, int pageCount);
+    static void WritePageFile(const std::string& cachePath, const File& input);
 
     // 1
     /**
-     * @brief Retorna o caminho padrão do arquivo de cache para um arquivo de
-     * entrada.
+     * @brief Retorna o caminho padrão do arquivo de
+     * cache para um arquivo de entrada.
      *
-     * Anexa a extensão ".cache_01" ao caminho do arquivo original.
+     * Anexa a extensão ".cache_01" ao caminho do
+     * arquivo original.
      *
      * @param input Arquivo de dados original.
-     * @return std::string Caminho completo do arquivo de cache consolidado.
+     * @return std::string Caminho completo do
+     * arquivo de cache consolidado.
      */
     static std::string GetCachePath(const File& input);
-
-    // 1
-    /**
-     * @brief Gera o caminho do arquivo temporário para uma página específica.
-     *
-     * Formata o caminho no padrão: `<basePath>__page_<pageIndex>.cache_01`.
-     *
-     * @param basePath Caminho base do arquivo original.
-     * @param pageIndex Índice da página correspondente.
-     * @return std::string Caminho do arquivo temporário da página.
-     */
-    static std::string GetPagePath(const std::string& basePath, int pageIndex);
 };
 }  // namespace Algorithm::IndexedSequentialAccess
