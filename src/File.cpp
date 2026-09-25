@@ -32,9 +32,14 @@ std::array<Item, PAGE_SIZE> File::GetPageAt(size_t index) {
     Log::Info("Reading page " + std::to_string(index) + " from file (" +
               this->path_ + ")");
     std::array<Item, PAGE_SIZE> page;
+
+    if (this->file_.eof() || this->file_.fail()) {
+        this->file_.clear();
+    }
+
     auto oldPos = this->file_.tellg();
 
-    if (index < 0 || index * PAGE_SIZE >= this->quantity_) {
+    if (index * PAGE_SIZE >= this->quantity_) {
         Log::Error("Invalid input file access index");
         return page;
     }
@@ -42,7 +47,9 @@ std::array<Item, PAGE_SIZE> File::GetPageAt(size_t index) {
     this->file_.seekg(sizeof(Item) * PAGE_SIZE * index, std::ifstream::beg);
     page = this->GetNextPage();
 
-    this->file_.seekg(oldPos);
+    if (oldPos >= 0) {
+        this->file_.seekg(oldPos);
+    }
     return page;
 }
 
