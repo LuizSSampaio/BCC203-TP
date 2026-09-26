@@ -6,6 +6,7 @@
 #include <fstream>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "../File.hpp"
 
@@ -74,6 +75,7 @@ public:
 
 private:
     std::ifstream file_;
+    std::vector<Entry> entries_;
 
     // Check existing cache file data with it input
     // the checked fields are last modification time and size
