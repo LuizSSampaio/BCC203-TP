@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <queue>
 
 #include "../Common.hpp"
 #include "../File.hpp"
@@ -56,25 +57,33 @@ void Cache::MergePageFiles(const std::string& cachePath, const File& input,
     // Escrevendo metadados no arquivo
     cacheFile.write(reinterpret_cast<const char*>(&meta), sizeof(Metadata));
     std::vector<Entry> entry(pageCount);
+    std::vector<std::ifstream> pageFile(pageCount);
+    std::priority_queue<Entry>;
+    std::vector<Entry>;
+    std::priority_queue<Entry>;
+    std::greater<Entry>minHeap;
+
     for (int i = 0; i < pageCount; i++) {
         std::string pagePath = GetPagePath(cachePath, i);
-        std::ifstream pageFile(pagePath, std::ios::binary);
-        if (pageFile.is_open()) {
+        pageFile[i].open(pagePath, std::ios::binary);
+        
+        if (pageFile[i].is_open()) {
             // lê o primeiro item da pagina
             Item firstItem;
-            pageFile.read(reinterpret_cast<char*>(&firstItem), sizeof(Item));
-            // coloca os dados no vetor
-            entry[i].key = firstItem.key;
-            entry[i].pageIndex = static_cast<uint64_t>(i);
+            if(pageFile[i].read(reinterpret_cast<char*>(&firstItem), sizeof(Item)){
+                minHeap.push(firstItem, i)
 
-            pageFile.close();
+            }
         }
     }
-    std::ranges::sort(entry, {}, &Entry::key);  // ordenando as páginas
+    int i;
+    pageFile[i].close();
+    std::sort(entry, {}, &Entry::key);  // ordenando as páginas
     // escrita na cache
-    cacheFile.write(reinterpret_cast<const char*>(&entry),
+    for(int i = 0; i<pageCount; i++){
+        cacheFile.write(reinterpret_cast<const char*>(&entry[i]),
                     sizeof(Entry) * pageCount);
-
+    }
     cacheFile.close();
 }
 
