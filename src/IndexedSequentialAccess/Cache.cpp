@@ -35,4 +35,14 @@ void Cache::BuildCache(File& input, const std::string& cachePath){
         index++;
     }
     cacheFile.close();
+    //this->file_(cachePath, std::ios::binary);
+}
+bool Cache::ValidateCache(const File& input){
+    Metadata tmp; 
+    this->file_.read(reinterpret_cast<char*>(&tmp), sizeof(Metadata));
+    if(tmp.lastModification == input.lastModification()&& tmp.size == input.size()){
+        Log::Info("Arquivo de cache existente");
+        return true;
+    }
+    return false;
 }
