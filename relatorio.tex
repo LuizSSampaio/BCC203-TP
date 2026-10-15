@@ -159,31 +159,37 @@ Para assegurar reprodutibilidade científica, robustez de engenharia de software
 \subsection{Linguagem, Compilador e Ferramentas de Construção}
 O projeto foi integralmente desenvolvido na linguagem \textbf{C++23}, tirando proveito de construções semânticas modernas da biblioteca padrão, como abstrações de sistemas de arquivos (\texttt{std::filesystem}), semântica de valores opcionais (\texttt{std::optional}), medição de alta precisão temporal (\texttt{std::chrono}) e encapsulamento modular:
 \begin{itemize}
-    \item \textbf{Compilador:} Clang++ 21.1 / GCC 15.3, operando sob o padrão ISO C++23 (\texttt{-std=c++23});
+    \item \textbf{Compilador:} GNU GCC 13.3.0 (\texttt{g++-13}) / Clang 18.0, operando sob o padrão ISO C++23 (\texttt{-std=c++23});
     \item \textbf{Sinalizadores de Compilação:} Verificação estrita de conformidade (\texttt{-Wall}, \texttt{-Wextra}, \texttt{-Wpedantic}) e compilação em perfil Release com otimização ativada (\texttt{-O3});
-    \item \textbf{Automação de Build:} CMake (versão 3.20+) gerenciando alvos de compilação, dependências e geração da base de compilação (\texttt{compile\_commands.json});
-    \item \textbf{Ambiente Reproduzível:} Nix Flakes e \textit{devenv}, garantindo paridade determinística de ferramentas de compilação, bibliotecas de sistema e pacotes \LaTeX{};
+    \item \textbf{Automação de Build:} CMake (versão 3.28+) gerenciando alvos de compilação, dependências e geração dos binários de pesquisa e gerador sintético de dados;
+    \item \textbf{Automação de CI/CD e Execução dos Benchmarks:} Pipeline de integração contínua via GitHub Actions (definido em \texttt{.github/}\allowbreak\texttt{workflows/}\allowbreak\texttt{benchmark.yml}), orquestrando a compilação, geração parametrizada de massas de dados sintéticos e execução automatizada dos experimentos sob ambiente virtualizado isolado;
     \item \textbf{Qualidade de Código:} \texttt{clang-format} (padronização de estilo) e \texttt{clang-tidy} (linter e análise estática).
 \end{itemize}
 
 \subsection{Especificações do Ambiente de Execução (Hardware e Software)}
-Os testes de desempenho foram executados no ambiente com as seguintes especificações físicas e lógicas:
+Para assegurar determinismo, reprodutibilidade e neutralidade de aferição, todos os testes de desempenho e medições cronométricas foram conduzidos em ambiente de nuvem dedicado através de um \textit{runner} hospedado pelo GitHub Actions (\texttt{runs-on: ubuntu-latest}), executando a ação automatizada descrita no arquivo \texttt{.github/}\allowbreak\texttt{workflows/}\allowbreak\texttt{benchmark.yml}. Esse arranjo elimina interferências de processos de usuário concorrentes, mitigando variações térmicas de frequência (\textit{thermal throttling}) e assegurando condições idênticas de sistema operacional e I/O entre os ensaios.
+
+As especificações técnicas do ambiente de execução (hardware virtualizado e software de suporte) estão consolidadas na Tabela~\ref{tab:hardware}.
 
 \begin{table}[H]
 \centering
-\caption{Especificação técnica da estação de testes.}
+\caption{Especificação técnica do ambiente de testes (GitHub Actions Runner).}
 \label{tab:hardware}
 \begin{tabular}{p{0.34\textwidth} p{0.60\textwidth}}
 \toprule
 \textbf{Componente} & \textbf{Especificação Técnica} \\
 \midrule
-Processador (CPU) & \textit{[Ex: AMD Ryzen 7 5800X / Intel Core i7-12700H]} \\
-Arquitetura e Núcleos & \textit{[Ex: x86\_64, 8 núcleos / 16 threads, Clock base 3.4 GHz]} \\
-Memória RAM & \textit{[Ex: 32 GB DDR4 3200 MHz]} \\
-Armazenamento Secundário & \textit{[Ex: NVMe PCIe 4.0 SSD M.2 1TB / Leitura sequencial 5000 MB/s]} \\
-Sistema Operacional & Linux \textit{[Ex: NixOS 24.11 / Ubuntu 24.04 LTS]} \\
-Versão do Kernel & Linux Kernel \textit{[Ex: 6.6.x-generic]} \\
-Sistema de Arquivos & \textit{[Ex: ext4 / btrfs / zfs]} \\
+Plataforma de Execução & GitHub Actions Runner (Host: Microsoft Azure, Região \texttt{centralus}) \\
+Processador (CPU) & 4 vCPUs (Intel Xeon Platinum / AMD EPYC de classe datacenter) \\
+Arquitetura & x86\_64 (64-bit) \\
+Memória RAM & 16 GB DDR4/DDR5 \\
+Armazenamento Secundário & Disco de Estado Sólido (SSD) virtualizado padrão Azure ($\approx 145$ GB no volume raiz \texttt{/dev/root}, com $\approx 108$ GB livres após higienização de ferramentas) \\
+Sistema Operacional & Linux Ubuntu 24.04.5 LTS (Noble Numbat), Imagem \texttt{ubuntu-24.04} (v20261004.327.1) \\
+Versão do Kernel & Linux Kernel 6.17.0-1022-azure \\
+Sistema de Arquivos & \texttt{ext4} (ponto de montagem \texttt{/}) \\
+Compilador C++ & GNU GCC 13.3.0 (\texttt{g++-13}, perfil \texttt{-O3 -std=c++23}) \\
+Ferramentas Auxiliares & CMake 3.28.3, Python 3.12.15, TeX Live 2023 (pdflatex) \\
+Workflow de Execução & GitHub Actions (\texttt{.github/}\allowbreak\texttt{workflows/}\allowbreak\texttt{benchmark.yml}, timeout 180 min) \\
 \bottomrule
 \end{tabular}
 \end{table}
